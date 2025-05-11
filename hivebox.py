@@ -1,4 +1,4 @@
-# PRINTING APP VERISION
+# PRINTING APP VERSION
 
 print("Hello From HiveBox\n")
 
