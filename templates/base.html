@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport for responsiveness -->
+    <title>{% block title %}{% endblock %}</title>
+    <!-- {% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'css/hivebox.css' %}">
+    {% endblock %} -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+<style>
+          body {
+            background-color: black;
+            color: white; /* Set text color to white for better contrast */
+        }
+        .card {
+            background-color: #343a40; /* Dark gray card background */
+        }
+
+        .hivebox-styled {
+                          letter-spacing: 0.2em;
+                          color: #f8f9fa;
+        }
+          .btn-custom-primary {
+        background-color: #007bff; /* Customize primary color */
+        color: white;
+        border-radius: 25px; /* Rounded corners */
+        padding: 10px 20px; /* Padding */
+        transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+    }
+    
+    .btn-custom-primary:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+        transform: scale(1.05); /* Slightly enlarge on hover */
+    }
+    
+    .btn-custom-success {
+        background-color: #28a745; /* Customize success color */
+        color: white;
+        border-radius: 25px; /* Rounded corners */
+        padding: 10px 20px; /* Padding */
+        transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+    }
+    
+    .btn-custom-success:hover {
+        background-color: #218838; /* Darker shade on hover */
+        transform: scale(1.05); /* Slightly enlarge on hover */
+    }
+      .breadcrumb {
+        display: flex;
+        justify-content: center; /* Center the breadcrumb items */
+        padding: 10px 0; /* Add some padding */
+        background-color: #343a40; /* Dark background */
+        border-radius: 5px; /* Rounded corners */
+    }
+
+    .breadcrumb-item {
+        color: #ffffff; /* White text color */
+        font-weight: bold; /* Bold text */
+        font-size: 1.2rem; /* Increase font size */
+    }
+
+    .breadcrumb-item.active {
+        color: #ffc107; /* Highlight active item */
+    }
+  
+</style>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <div class="container justify-content-center">
+            <a class="navbar-brand hivebox-styled" href="{% url 'home' %}">HiveBox Website</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <ol class="breadcrumb my-4">
+            {% block breadcrumb %}
+            {% endblock %}
+        </ol>
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% block scripts %}
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% endblock %}
+  <hr class="mt-5">
+<footer class="fixed-bottom bg-dark p-2 text-left">
+    <p class="mb-0 text-light">&copy; 2025 Eng/Sona</p>
+    <p class="mb-0 text-light">DevOps Engineer</p>
+    <p class="mb-0">
+    <a href="mailto:HassanAhmed.Mohamed@outlook.com" style="color: rgb(5, 5, 48); text-decoration: none;">Email</a>
+    <span class="text-light"> Connect Me</span>
+</p>
+</footer>
+</body>
+</html>

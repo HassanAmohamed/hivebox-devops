@@ -1,0 +1,19 @@
+
+{% extends 'base.html' %}
+
+{% block title %} HiveBox {% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active text-center">HiveBox App</li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-white">Welcome to the HiveBox App</h1>
+    <p class="text-center text-light">Your one-stop solution for monitoring temperature data.</p>
+    <div class="text-center mt-4">
+        <a href="{% url 'version' %}" class="btn btn-custom-primary">Check App Version </a>
+        <a href="{% url 'temperature' %}" class="btn btn-custom-success">View Temperature Data</a>
+    </div>
+</div>
+{% endblock %}
