@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hivebox-app
+  labels:
+    app: hivebox
+spec:
+  replicas: 1 # Number of pods to run
+  selector:
+    matchLabels:
+      app: hivebox
+  template:
+    metadata:
+      labels:
+        app: hivebox
+    spec:
+      containers:
+        - name: hivebox-app
+          image: hivebox-image:latest # Replace with your image name!
+          ports:
+            - containerPort: 8000
+          imagePullPolicy: IfNotPresent 

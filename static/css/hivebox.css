@@ -1,0 +1,54 @@
+        body {
+            background-color: black;
+            color: white; /* Set text color to white for better contrast */
+        }
+        .card {
+            background-color: #343a40; /* Dark gray card background */
+        }
+
+        .hivebox-styled {
+                          letter-spacing: 0.2em;
+                          color: #f8f9fa;
+        }
+          .btn-custom-primary {
+        background-color: #007bff; /* Customize primary color */
+        color: white;
+        border-radius: 25px; /* Rounded corners */
+        padding: 10px 20px; /* Padding */
+        transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+    }
+    
+    .btn-custom-primary:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+        transform: scale(1.05); /* Slightly enlarge on hover */
+    }
+    
+    .btn-custom-success {
+        background-color: #28a745; /* Customize success color */
+        color: white;
+        border-radius: 25px; /* Rounded corners */
+        padding: 10px 20px; /* Padding */
+        transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+    }
+    
+    .btn-custom-success:hover {
+        background-color: #218838; /* Darker shade on hover */
+        transform: scale(1.05); /* Slightly enlarge on hover */
+    }
+      .breadcrumb {
+        display: flex;
+        justify-content: center; /* Center the breadcrumb items */
+        padding: 10px 0; /* Add some padding */
+        background-color: #343a40; /* Dark background */
+        border-radius: 5px; /* Rounded corners */
+    }
+
+    .breadcrumb-item {
+        color: #ffffff; /* White text color */
+        font-weight: bold; /* Bold text */
+        font-size: 1.2rem; /* Increase font size */
+    }
+
+    .breadcrumb-item.active {
+        color: #ffc107; /* Highlight active item */
+    }

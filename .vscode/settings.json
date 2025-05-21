@@ -1,0 +1,20 @@
+{
+    "cSpell.words": [
+        "hivebox",
+        "hadolint",
+        "buildx",
+        "scorecard"
+    ],
+    "yamlfmt.args": [
+        "-formatter",
+        "yaml",
+        "-indent",
+        "2"
+    ],
+    "[yaml]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml",
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "editor.insertSpaces": true
+    }
+}
