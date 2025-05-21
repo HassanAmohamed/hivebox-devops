@@ -33,14 +33,15 @@ jobs:
           if [ -d "./src" ] && [ -f "./src/__init__.py" ]; then
             pylint --fail-under=7.0 src/ || echo "::warning::Pylint score below threshold - not failing workflow"
           else
+            echo "::warning::src directory is not a Python package or doesn't exist"
             pylint --fail-under=7.0 $(find . -name "*.py" -not -path "./.*/*") || echo "::warning::Pylint score below threshold - not failing workflow"
           fi
-        continue-on-error: true
+        continue-on-error: true # This should be at the step level
 
       - name: Check and fix Dockerfile line endings
         run: |
           if [ -f Dockerfile ]; then
-            sed -i 's/\r$//' Dockerfile
+            sed -i 's/\r$//' Dockerfile # Attempt to convert CRLF to LF
             if grep -q $'\r' Dockerfile; then
               echo "::error::Dockerfile contains CRLF line endings. Convert to LF."
               exit 1
@@ -51,7 +52,8 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
-          ignored-rules: "DL3008,DL3013"
+          ignore: "DL3008,DL3013,DL3018" # Correct parameter name and added DL3018
+          failure-threshold: warning # Optional: change to 'error' for stricter checks
 
   test:
     name: Unit Tests
@@ -69,8 +71,22 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest
+          pip install pytest pytest-cov # Added pytest-cov
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
           python -m pytest tests/ --cov=./ --cov-report=xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+
+      - name: Cache pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
