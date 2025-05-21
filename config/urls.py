@@ -20,7 +20,7 @@ from api.views import home, version, temperature
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home', home, name= 'home'),
+    path('', home, name= 'home'),
     path('version', version, name='version'),
     path('temperature', temperature, name='temperature'),
 

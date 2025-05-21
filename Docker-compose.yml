@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  web:
+    build:
+      context: .  # Set the build context to the current directory
+      dockerfile: Dockerfile  
+    container_name: HiveBox
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DJANGO_SECRET_KEY: 'django-insecure-_@6r=m1as#t42t*246e9=7hbzy^@8q8b0-&irc)$igwwzh)lx1'  # Change to a secure key
+      DEBUG: "False"
+      DATABASE_NAME: "hivebox"
+      DATABASE_USER: "postgres"
+      DATABASE_PASSWORD: "Sona;011"
+      DATABASE_HOST: "db"
+      DATABASE_PORT: "5432"
+    volumes:
+      - .:/app  
+    env_file:
+      - .env 
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "hivebox"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Sona;011"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

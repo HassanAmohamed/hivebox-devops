@@ -116,8 +116,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME', 'hivebox'),  # Ensure this matches your database name
+        'USER': os.getenv('DATABASE_USER', 'postgres'),       # Ensure this matches your DB user
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'Sona;011'),
+        'HOST': os.getenv('DATABASE_HOST', 'db'),             # Use 'db' as defined in docker-compose.yml  or localhost on locally
+        'PORT': os.getenv('DATABASE_PORT', '5432'),           # Default PostgreSQL port
     }
 }
 
@@ -164,8 +168,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_DIRS=[
-    os.path.join(BASE_DIR,'static'),
+    os.path.join(BASE_DIR,'static')
 ]
 
