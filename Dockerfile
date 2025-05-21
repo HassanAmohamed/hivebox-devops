@@ -6,11 +6,11 @@ WORKDIR /app
 
 # Install necessary build dependencies
 RUN apk add --no-cache \
-    gcc \               # C compiler for building packages
-musl-dev \         # C standard library development files
-libffi-dev \       # Foreign Function Interface library development files
-openssl-dev \      # OpenSSL development files
-postgresql-dev      # PostgreSQL development files
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    postgresql-dev
 
 # Copy the requirements file to the working directory
 COPY requirements.txt .
@@ -34,9 +34,9 @@ COPY --from=builder /install /usr/local
 COPY . .
 
 # Clean up unnecessary files to reduce image size
-RUN find . -name "*.pyc" -delete \               # Remove Python bytecode files
-&& find . -name "__pycache__" -exec rm -rf {} + \  # Remove __pycache__ directories
-&& rm -rf .git* *.md *.yml discussion_board/tests  # Remove git files, markdown, YAML files, and test directory
+RUN find . -name "*.pyc" -delete && \
+    find . -name "__pycache__" -exec rm -rf {} + && \
+    rm -rf -- .git* ./*.md ./*.yml discussion_board/tests
 
 # Expose port 8000 for the application
 EXPOSE 8000
@@ -48,4 +48,4 @@ RUN adduser -D appuser
 USER appuser
 
 # Define the command to run the application
-CMD ["python", "manage
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
