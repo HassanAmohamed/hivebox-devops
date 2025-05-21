@@ -36,12 +36,12 @@ jobs:
             echo "::warning::src directory is not a Python package or doesn't exist"
             pylint --fail-under=7.0 $(find . -name "*.py" -not -path "./.*/*") || echo "::warning::Pylint score below threshold - not failing workflow"
           fi
-        continue-on-error: true # This should be at the step level
+        continue-on-error: true
 
       - name: Check and fix Dockerfile line endings
         run: |
           if [ -f Dockerfile ]; then
-            sed -i 's/\r$//' Dockerfile # Attempt to convert CRLF to LF
+            sed -i 's/\r$//' Dockerfile
             if grep -q $'\r' Dockerfile; then
               echo "::error::Dockerfile contains CRLF line endings. Convert to LF."
               exit 1
@@ -52,13 +52,27 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
-          ignore: "DL3008,DL3013,DL3018" # Correct parameter name and added DL3018
-          failure-threshold: warning # Optional: change to 'error' for stricter checks
+          ignore: "DL3008,DL3013,DL3018"
+          failure-threshold: warning
 
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
     needs: lint
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand(\"ping\").ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -71,33 +85,19 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest pytest-cov # Added pytest-cov
+          pip install pytest pytest-cov pytest-django
 
-      - name: Find and run tests
+      - name: Set up environment variables
         run: |
-          # Check if tests directory exists
-          if [ -d "tests" ]; then
-            echo "Running tests from tests/"
-            python -m pytest tests/ --cov=./ --cov-report=xml
-          elif [ -n "$(find . -name 'test_*.py' -not -path './.*/*')" ]; then
-            echo "Running discovered tests"
-            python -m pytest --cov=./ --cov-report=xml
-          else
-            echo "::warning::No tests found"
-            # Create empty coverage file if no tests exist
-            echo '<?xml version="1.0" ?><coverage></coverage>' > coverage.xml
-          fi
+          echo "DJANGO_SETTINGS_MODULE=api.settings.test" >> $GITHUB_ENV
+          echo "MONGO_DB_NAME=testdb" >> $GITHUB_ENV
+          echo "MONGO_HOST=mongodb://root:example@localhost:27017" >> $GITHUB_ENV
+          echo "SECRET_KEY=test-secret-key" >> $GITHUB_ENV
+          echo "DEBUG=True" >> $GITHUB_ENV
 
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage.xml
-          flags: unittests
+      - name: Wait for MongoDB to be ready
+        run: sleep 10
 
-      - name: Cache pip packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Run tests
+        run: |
+          python -m pytest api/tests/ --cov=./ --cov-report=xml --ds=api.settings.test
