@@ -16,3 +16,10 @@ SENSEBOX_IDS = [
     "67837e108e3d610008017850"   
 ]
 HIVEBOX_VERSION = '0.1.0'  # Default version for tests
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'api/templates')],
+        'APP_DIRS': True,
+    },
+]
