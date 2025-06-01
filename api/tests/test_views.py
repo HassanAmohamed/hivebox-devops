@@ -1,7 +1,7 @@
+import json
 from django.test import TestCase, override_settings
 from unittest.mock import patch, MagicMock
 from django.urls import reverse
-import json
 
 class ApiTests(TestCase):
     @override_settings(
@@ -49,6 +49,7 @@ class ApiTests(TestCase):
 
         # Prepare mock responses for each sensebox ID
         mock_responses = []
+        expected_values_in_html = []
         for i, box_id in enumerate(sensebox_ids):
             # Mock response for getting box details
             mock_box_response = MagicMock()
@@ -65,12 +66,14 @@ class ApiTests(TestCase):
 
             # Mock response for getting sensor measurements
             mock_measurements_response = MagicMock()
+            current_value = 22.5 + i * 0.5
             mock_measurements_response.json.return_value = [{
                 'createdAt': f'2023-01-01T12:0{i}:00Z', # Vary time for distinction
-                'value': str(22.5 + i * 0.5) # Vary value for distinction
+                'value': str(current_value) # Vary value for distinction
             }]
             mock_measurements_response.status_code = 200
             mock_responses.append(mock_measurements_response)
+            expected_values_in_html.append(str(current_value)) # Store for HTML assertion
         
         # Assign the list of mock responses to side_effect
         mock_get.side_effect = mock_responses
@@ -85,14 +88,15 @@ class ApiTests(TestCase):
         # Expecting one sample per sensebox ID
         self.assertEqual(data['samples'], len(sensebox_ids))
         
-        # Verify some content from the first mocked box
-        self.assertIn('22.5', str(data)) 
+        # Calculate the expected average temperature
+        expected_average_temp = sum(float(val) for val in expected_values_in_html) / len(expected_values_in_html)
+        self.assertEqual(data['average_temp'], expected_average_temp) # Assert the calculated average
 
         # Test HTML response
         response = self.client.get(reverse('temperature'))
         self.assertEqual(response.status_code, 200)
         # Assert that the HTML content contains values from all mocked sensors
-        for i in range(len(sensebox_ids)):
-            self.assertContains(response, str(22.5 + i * 0.5))
+        for val in expected_values_in_html:
+            self.assertContains(response, val)
 
     # Additional test cases can be added here
