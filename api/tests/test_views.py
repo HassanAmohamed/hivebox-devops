@@ -26,6 +26,7 @@ class ApiTests(TestCase):
         # Test HTML response
         response = self.client.get(reverse('version'))
         self.assertEqual(response.status_code, 200)
+        # Assert that the HTML content contains the version number
         self.assertContains(response, '0.1.0')
 
     @override_settings(
@@ -39,31 +40,40 @@ class ApiTests(TestCase):
     @patch('requests.get')
     def test_temperature_endpoint_success(self, mock_get):
         """Test successful temperature endpoint"""
-        test_box_id = "testbox123"
-
-        # Setup mock responses for box and measurements
-        mock_box_response = MagicMock()
-        mock_box_response.json.return_value = {
-            '_id': test_box_id,
-            'sensors': [{
-                '_id': 'tempsensor123',
-                'title': 'temperature',
-                'unit': '°C'
-            }]
-        }
-        mock_box_response.status_code = 200
-
-        mock_measurements_response = MagicMock()
-        mock_measurements_response.json.return_value = [{
-            'createdAt': '2023-01-01T12:00:00Z',
-            'value': '22.5'
-        }]
-        mock_measurements_response.status_code = 200
-
-        mock_get.side_effect = [
-            mock_box_response,
-            mock_measurements_response
+        # Define the SENSEBOX_IDS from settings for clarity in this test
+        sensebox_ids = [
+            "679652e79697fc0007248229",
+            "631af55c8aecc5001c3298fd",
+            "67837e108e3d610008017850"
         ]
+
+        # Prepare mock responses for each sensebox ID
+        mock_responses = []
+        for i, box_id in enumerate(sensebox_ids):
+            # Mock response for getting box details
+            mock_box_response = MagicMock()
+            mock_box_response.json.return_value = {
+                '_id': box_id,
+                'sensors': [{
+                    '_id': f'tempsensor{i+1}',
+                    'title': 'temperature',
+                    'unit': '°C'
+                }]
+            }
+            mock_box_response.status_code = 200
+            mock_responses.append(mock_box_response)
+
+            # Mock response for getting sensor measurements
+            mock_measurements_response = MagicMock()
+            mock_measurements_response.json.return_value = [{
+                'createdAt': f'2023-01-01T12:0{i}:00Z', # Vary time for distinction
+                'value': str(22.5 + i * 0.5) # Vary value for distinction
+            }]
+            mock_measurements_response.status_code = 200
+            mock_responses.append(mock_measurements_response)
+        
+        # Assign the list of mock responses to side_effect
+        mock_get.side_effect = mock_responses
 
         # Test JSON response
         response = self.client.get(
@@ -72,11 +82,17 @@ class ApiTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['samples'], 1)
+        # Expecting one sample per sensebox ID
+        self.assertEqual(data['samples'], len(sensebox_ids))
+        
+        # Verify some content from the first mocked box
+        self.assertIn('22.5', str(data)) 
 
         # Test HTML response
         response = self.client.get(reverse('temperature'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '22.5')
+        # Assert that the HTML content contains values from all mocked sensors
+        for i in range(len(sensebox_ids)):
+            self.assertContains(response, str(22.5 + i * 0.5))
 
     # Additional test cases can be added here
