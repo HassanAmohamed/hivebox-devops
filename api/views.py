@@ -25,7 +25,7 @@ def home(request):
     """Render the home page for the HiveBox app."""
     if _should_return_json(request):
         return JsonResponse({'message': 'HiveBox API'})
-    return render(request, 'api/home.html')
+    return render(request, 'home.html')
 
 @require_GET
 def version(request):
@@ -33,7 +33,7 @@ def version(request):
     data = {'version': settings.HIVEBOX_VERSION}
     if _should_return_json(request):
         return JsonResponse(data)
-    return render(request, 'api/version.html', data)
+    return render(request, 'version.html', data)
 
 @require_GET
 def temperature(request):
@@ -45,7 +45,7 @@ def temperature(request):
         logger.debug("Returning cached temperature data")
         if _should_return_json(request):
             return JsonResponse(cached_data)
-        return render(request, 'api/temperature.html', cached_data)
+        return render(request, 'temperature.html', cached_data)
 
     temperatures = []
     errors = []
@@ -156,4 +156,4 @@ def temperature(request):
 
     if _should_return_json(request):
         return JsonResponse(response_data)
-    return render(request, 'api/temperature.html', response_data)
+    return render(request, 'temperature.html', response_data)
