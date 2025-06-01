@@ -19,7 +19,7 @@ DATABASES = {
 }
 
 ROOT_URLCONF = 'api.urls'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Cairo'
 USE_TZ = True
 
 # Custom settings for your app
