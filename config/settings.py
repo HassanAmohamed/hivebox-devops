@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-_@6r=m1as#t42t*246e9=7hbzy^@8q8b0-&irc)$igwwzh)lx1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ '*' ]
 
 
 # Application definition
@@ -117,14 +117,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME', 'hivebox'),  # Ensure this matches your database name
-        'USER': os.getenv('DATABASE_USER', 'postgres'),       # Ensure this matches your DB user
+        'NAME': os.getenv('DATABASE_NAME', 'hivebox'),
+        'USER': os.getenv('DATABASE_USER', 'postgres'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'Sona;011'),
-        'HOST': os.getenv('DATABASE_HOST', 'db'),             # Use 'db' as defined in docker-compose.yml  or localhost on locally
-        'PORT': os.getenv('DATABASE_PORT', '5432'),           # Default PostgreSQL port
+        'HOST': os.getenv('DATABASE_HOST', 'db'),  # Ensure this matches your db service name   localhost if run locally
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
     }
 }
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.dummy',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

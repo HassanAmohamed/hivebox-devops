@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hivebox
+spec:
+  selector:
+    app: hivebox  # Must match deployment's pod labels
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000  # Must match container port
+  type: NodePort
+  # Note for local K8s (Minikube/Docker Desktop on Windows):
+  # Access the service via the Node's IP and the assigned NodePort.
+  # Find the NodePort using 'kubectl get svc hivebox'
+  # For Minikube, use 'minikube service hivebox --url' or 'minikube ip' + NodePort.
+  # For Docker Desktop, usually access via 'localhost:<NodePort>'.

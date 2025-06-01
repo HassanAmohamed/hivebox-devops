@@ -1,0 +1,13 @@
+# PostgreSQL Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: db # Renamed to 'db' for common convention for database services
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
