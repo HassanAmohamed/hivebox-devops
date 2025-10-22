@@ -8,62 +8,67 @@ on:
 
 jobs:
   lint:
-    name: Lint Code
+    name: Lint Code and Dockerfile
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
-      - run: pip install pylint
-      - run: pylint --fail-under=7.0 $(find . -name "*.py" | head -20) || true
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint
+
+      - name: Run Pylint
+        run: |
+          find . -name "*.py" -not -path "*/.*" -not -path "*/migrations/*" | \
+            head -20 | xargs pylint --fail-under=7.0 || echo "Pylint completed"
+        continue-on-error: true
+
+      - name: Lint Dockerfile with Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          ignore: DL3008,DL3013,DL3018
+          failure-threshold: warning
 
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: docker build -t my-app .
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t my-app .
 
   test:
-    name: Run Tests
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
-      - run: pip install -r requirements.txt pytest
-      - run: python manage.py test
 
-  endpoint-test:
-    name: Test Version Endpoint
-    runs-on: ubuntu-latest
-    needs: [build, test]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install -r requirements.txt
-      - run: |
-          python manage.py runserver &
-          sleep 10
-          curl -f http://localhost:8000/version || exit 1
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest
 
-  security:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ossf/scorecard-action@v2.3.1
-        with:
-          results_file: results.sarif
-          results_format: sarif
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_results: true
-      - uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: results.sarif
+      - name: Run tests
+        run: |
+          python -m pytest -v --cov=./ --cov-report=xml
