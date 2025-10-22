@@ -1,7 +1,7 @@
-# Use the official Python 3.11 Alpine image as the base for the builder stage
+# Import Base Image Python-alpine
 FROM python:3.11-alpine AS builder
 
-# Set the working directory inside the container
+# Set WorkDir
 WORKDIR /app
 
 # Install necessary build dependencies
@@ -12,7 +12,7 @@ RUN apk add --no-cache \
     openssl-dev \
     postgresql-dev
 
-# Copy the requirements file to the working directory
+# Copy the requirements to working directory
 COPY requirements.txt .
 
 # Install Python dependencies to the specified install prefix

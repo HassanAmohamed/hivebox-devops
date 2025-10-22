@@ -14,7 +14,7 @@ MAX_RETRIES = 3
 RETRY_DELAY = 1  # seconds
 
 def _should_return_json(request):
-    """Helper function to determine response format"""
+    """ function to test response format """
     return (
         request.headers.get('Accept') == 'application/json' or
         request.GET.get('format') == 'json'

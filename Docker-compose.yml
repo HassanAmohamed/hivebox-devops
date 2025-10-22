@@ -5,7 +5,7 @@ services:
     build:
       context: .  # Set the build context to the current directory
       dockerfile: Dockerfile  
-    container_name: HiveBox
+    container_name: HiveBox01
     ports:
       - "8000:8000"
     depends_on:
