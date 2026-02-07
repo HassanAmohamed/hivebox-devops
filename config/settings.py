@@ -66,7 +66,7 @@ LOGGING = {
 }
 # SensBox config
 SENSEBOX_IDS = [
-    "679652e79697fc0007248229",  
+    "5d1800a030bde6001a8e9a5d",  
     "631af55c8aecc5001c3298fd",  
     "67837e108e3d610008017850"   
 ]
@@ -120,7 +120,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASE_NAME', 'hivebox'),  # Ensure this matches your database name
         'USER': os.getenv('DATABASE_USER', 'postgres'),       # Ensure this matches your DB user
         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'Sona;011'),
-        'HOST': os.getenv('DATABASE_HOST', 'db'),             # Use 'db' as defined in docker-compose.yml  or localhost on locally
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),             # Use 'db' as defined in docker-compose.yml  or localhost on locally
         'PORT': os.getenv('DATABASE_PORT', '5432'),           # Default PostgreSQL port
     }
 }
