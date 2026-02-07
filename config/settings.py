@@ -67,7 +67,7 @@ LOGGING = {
 }
 # SensBox config
 SENSEBOX_IDS = [
-    "679652e79697fc0007248229",  
+    "627dfce2a66ded001b8edef9",  
     "631af55c8aecc5001c3298fd",  
     "67837e108e3d610008017850"   
 ]
@@ -121,7 +121,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASE_NAME', 'hivebox'),
         'USER': os.getenv('DATABASE_USER', 'postgres'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'Sona;011'),
-        'HOST': os.getenv('DATABASE_HOST', 'db'),  # Ensure this matches your db service name   localhost if run locally
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),  # Ensure this matches your db service name   localhost if run locally
         'PORT': os.getenv('DATABASE_PORT', '5432'),
     }
 }
